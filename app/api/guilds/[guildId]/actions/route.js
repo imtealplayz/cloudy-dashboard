@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSession } from '../../../../../../lib/session';
+import { getSession } from '../../../../../lib/session';
 import { canManageGuild, discordGet } from '../../../../../../lib/discord';
 import { runCloudyAction } from '../../../../../../lib/cloudy';
 
