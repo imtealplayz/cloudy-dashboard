@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '../../../../../lib/session';
-import { canManageGuild, discordGet } from '../../../../../../lib/discord';
+import { canManageGuild, discordGet } from '../../../../../lib/discord';
 import { replaceCloudyData } from '../../../../../../lib/cloudy';
 
 export const runtime = 'nodejs';
