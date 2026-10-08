@@ -91,6 +91,25 @@ export default function DashboardClient({ guildId }) {
     }
   }
 
+  async function runAction(body) {
+    setMessage(null);
+    try {
+      const response = await fetch('/api/guilds/' + guildId + '/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Action failed.');
+      setState((current) => ({ ...current, data: { ...current.data, settings: data.settings } }));
+      setMessage({ type: 'success', text: 'Cloudy applied the action.' });
+      return data.settings;
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message });
+      return null;
+    }
+  }
+
   async function saveAllData(value) {
     setMessage(null);
     try {
@@ -209,7 +228,7 @@ export default function DashboardClient({ guildId }) {
 
           {section === 'overview' && <Overview settings={settings} state={state.data} />}
           {section === 'general' && <General settings={settings} resources={resources} onSave={save} />}
-          {section === 'tickets' && <Tickets settings={settings} resources={resources} onSave={save} />}
+          {section === 'tickets' && <Tickets settings={settings} resources={resources} onSave={save} onAction={runAction} />}
           {section === 'security' && <Security settings={settings} onSave={save} />}
           {section === 'automod' && <AutoMod settings={settings} onSave={save} />}
           {section === 'moderation' && <Moderation settings={settings} />}
@@ -352,7 +371,7 @@ function General({ settings, resources, onSave }) {
   );
 }
 
-function Tickets({ settings, resources, onSave }) {
+function Tickets({ settings, resources, onSave, onAction }) {
   const [panelChannelId, setPanelChannelId] = useState(settings.ticket.panelChannelId);
   const [categoryId, setCategoryId] = useState(settings.ticket.categoryId);
   const [supportRoleId, setSupportRoleId] = useState(settings.ticket.supportRoleId);
@@ -371,7 +390,17 @@ function Tickets({ settings, resources, onSave }) {
             <Select value={supportRoleId} onChange={setSupportRoleId} options={resources.roles} />
           </Field>
         </div>
-        <SaveButton onClick={() => onSave({ ticket: { panelChannelId, categoryId, supportRoleId } })} />
+        <div className="save-row">
+          <button className="button button-primary" onClick={() => onSave({ ticket: { panelChannelId, categoryId, supportRoleId } })}>Save settings</button>
+          <button
+            className="button button-secondary"
+            disabled={!panelChannelId}
+            onClick={() => onAction({ action: 'ticket_setup', channelId: panelChannelId, categoryId, supportRoleId })}
+          >
+            Create / refresh panel
+          </button>
+          <button className="button button-danger" onClick={() => onAction({ action: 'ticket_disable' })}>Disable ticket system</button>
+        </div>
         <div className="note">
           Changing the stored panel channel does not automatically move an already-sent panel message. Use Cloudy's ticket setup command when you need to recreate the panel.
         </div>
