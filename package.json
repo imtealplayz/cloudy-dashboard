@@ -1,0 +1,19 @@
+{
+  "name": "cloudy-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudy Discord bot administration dashboard.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "engines": {
+    "node": ">=24.17.0"
+  },
+  "dependencies": {
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  }
+}
